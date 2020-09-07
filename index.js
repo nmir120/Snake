@@ -10,26 +10,50 @@
 unnecessary to load apple each time? only load when consumed? nbd tho
 */
 
-var continueGame = true;
-setInterval(draw, 1000 / 8); //draw 8 times a second
-//possible feature: adjustable speed/difficulty
-
 document.addEventListener("keydown", keyDownEvent);
+var testCount = 0; //delete
+var continueGame = true;
 var snakeBody = [];
-
-var snakeX = 6 * 20;
-var snakeY = 10 * 20;
-
+var snakeHeadX = 6 * 20;
+var snakeHeadY = 10 * 20;
 var nextX = 0;
 var nextY = 0;
 var appleX = 14 * 20;
 var appleY = 10 * 20;
-
 var snakeColour = 'rgb(255, 255, 102)';
 var appleColour = 'rgb(255, 30, 30)';
-
 var currentDirection = 0; //1 = left, 2 = up, 3 = right, 4 = down
-//start with no direction and only head piece?
+
+
+snakeBody.push({x: snakeHeadX, y: snakeHeadY});
+
+setInterval(draw, 1000 / 8); //draw 8 times a second
+//possible feature: adjustable speed/difficulty
+
+function loadBackground() {
+  //checkered background
+  var ctx = canvas.getContext('2d');
+  for (var i = 0; i < 20; i++) {
+    for (var j = 0; j < 20; j++) {
+      if (j % 2 == 0 && i % 2 == 0) {
+        ctx.fillStyle = 'rgb(0, 180, 0)';
+      } else if (j % 2 != 0 && i % 2 == 0) {
+        ctx.fillStyle = 'rgb(0, 200, 0)';
+      } else if (j % 2 == 0 && i % 2 != 0) {
+        ctx.fillStyle = 'rgb(0, 200, 0)';
+      } else {
+        ctx.fillStyle = 'rgb(0, 180, 0)';
+      }
+      ctx.fillRect(j * 20, i * 20, 20, 20);
+    }
+  }
+}
+
+function checkBorderTouch() {
+  if ((snakeHeadX + 20*nextX) < 0 || (snakeHeadX + 20*nextX) > 19*20 || (snakeHeadY + 20*nextY) < 0 || (snakeHeadY + 20*nextY) > 19*20) {
+    return true;
+  }
+}
 
 function draw() {
   var canvas = document.getElementById('canvas');
@@ -37,75 +61,56 @@ function draw() {
   var prevY;
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
-    //checkered background
-    for (var i = 0; i < 20; i++) {
-      for (var j = 0; j < 20; j++) {
-        if (j % 2 == 0 && i % 2 == 0) {
-          ctx.fillStyle = 'rgb(0, 180, 0)';
-        } else if (j % 2 != 0 && i % 2 == 0) {
-          ctx.fillStyle = 'rgb(0, 200, 0)';
-        }
-        else if (j % 2 == 0 && i % 2 != 0) {
-          ctx.fillStyle = 'rgb(0, 200, 0)';
-        }
-        else {
-          ctx.fillStyle = 'rgb(0, 180, 0)';
-        }
-        ctx.fillRect(j * 20, i * 20, 20, 20);
-      }
-    }
+    // load checkered background
+    loadBackground();
 
     if (continueGame) {
       //end game if border is touched
-      if ((snakeX + 20*nextX) < 0 || (snakeX + 20*nextX) > 19*20 || (snakeY + 20*nextY) < 0 || (snakeY + 20*nextY) > 19*20) {
+      if (checkBorderTouch()) {
         continueGame = false;
         //get rid of apple and snake?
 
         //else if snake head touches body piece
+
       } else {
-        //apple
+        //load apple
         ctx.fillStyle = appleColour;
         ctx.fillRect(appleX, appleY, 20, 20);
+        
+        //copy prev X and Y position for body, and update snakeHeadX and Y,
+        prevX = snakeBody[snakeBody.length - 1].x; //where the last body piece was before the keydown event
+        prevY = snakeBody[snakeBody.length - 1].y;
+        snakeHeadX += 20 * nextX; //new head position after keydown event
+        snakeHeadY += 20 * nextY;
+
+        testCount = 0;
+        //snake shifter: move body pieces along one space
+        if(snakeBody.length >= 2) { //two or more body pieces
+          for (var i = snakeBody.length - 1; i > 0; i--) {
+            console.log("i is: " + i);
+            testCount++; 
+            console.log("test count is: " + testCount); //testCount reveals ****infinite loop....
+            snakeBody[i].x = snakeBody[i - 1].x; //this wouldn't work if body length is just 2
+            snakeBody[i].y = snakeBody[i - 1].y;
+          }
+        }
+        
+
+        snakeBody[0].x = snakeHeadX; //update snake head
+        snakeBody[0].y = snakeHeadY;
+
         //snake
         ctx.fillStyle = snakeColour;
-        //copy prev X and Y position for body, and update snakeX and Y,
-        prevX = snakeX; //where the head was before the keydown event
-        prevY = snakeY;
-        snakeX += 20 * nextX; //new head position after keydown event
-        snakeY += 20 * nextY;
-
-        //snake shifter: move body pieces along one space
-        // if (snakeBody.length > 2) {
-        //   for (var i = snakeBody.length; i > 2; i - 2) {
-        //     snakeBody[i] = snakeBody[i - 2]; //update Y for each body piece
-        //     snakeBody[i - 1] = snakeBody [i - 3] //update X
-        //   }
-        // }
-
-        snakeBody[0] = snakeX; //update snake head
-        snakeBody[1] = snakeY;
-
-        ctx.fillRect(snakeBody[0], snakeBody[1], 20, 20); //draw head
-
-        if (snakeBody.length > 2) {
-        //   for (var i = 2; i < snakeBody.length; i + 2) {
-        //     ctx.fillRect(snakeBody[i], snakeBody[i+1], 20, 20); 
-        //   }
-          ctx.fillRect(prevX, prevY, 20, 20);
+        for (var i = 0; i < snakeBody.length; i++) { //*** idk why this crashes
+          ctx.fillRect(snakeBody[i].x, snakeBody[i].y, 20, 20);
         }
-        //tried to draw all of body... 
-        // for (var i = 0; i < snakeBodyX.length; i++) {
-        //     ctx.fillRect(snakeBodyX[i], snakeBodyY[i], 20, 20);
-        // }
         
+
       }
 
       //if snake head touches apple... add body piece, respawn apple
-      if (snakeX == appleX && snakeY == appleY) {
-        console.log(snakeBody.length);
-        snakeBody.push(prevX);
-        snakeBody.push(prevY);
-        console.log(snakeBody.length);
+      if (snakeHeadX == appleX && snakeHeadY == appleY) {
+        snakeBody.push({x: prevX, y: prevY});
         //ctx.fillRect(prevX, prevY, 20, 20); //body
 
         //implement: make sure apple doesn't respawn in snake body
@@ -115,11 +120,14 @@ function draw() {
 
     } else { //if game over, leave snake and apple in position?
       //apple
-      ctx.fillStyle = appleColour;
-      ctx.fillRect(appleX, appleY, 20, 20);
-      //snake
-      ctx.fillStyle = snakeColour;
-      ctx.fillRect(snakeX, snakeY, 20, 20); //not sure why theres a blink, trace code
+      //   ctx.fillStyle = appleColour;
+      //   ctx.fillRect(appleX, appleY, 20, 20);
+      //   //snake
+      //   ctx.fillStyle = snakeColour;
+      //   ctx.fillRect(snakeHeadX, snakeHeadY, 20, 20); //not sure why theres a blink, trace code
+
+
+      //game over screen + score + (hi-score?)
     }
   }
 }
@@ -147,7 +155,6 @@ function keyDownEvent(e) {
   }
 }
 
-  
 //   - arrow key triggers change in Image/canvas
 //    - certain moves not possible (cant turn left if ur going right etc)
 //   - apple appears in a random square excludings spaces occupied by snake
