@@ -3,7 +3,7 @@
 2. get snake head moving $$$
 3. colored / checkered background? $$$
 4. border = death... game over screen (grid pattern? or is there any easier way?)
-5. add body ... duplicate last position?
+5. add body $$$
 6. 
 7. reorganize where variables should go... var or let?
 ...
@@ -11,7 +11,6 @@ unnecessary to load apple each time? only load when consumed? nbd tho
 */
 
 document.addEventListener("keydown", keyDownEvent);
-var testCount = 0; //delete
 var continueGame = true;
 var snakeBody = [];
 var snakeHeadX = 6 * 20;
@@ -49,9 +48,17 @@ function loadBackground() {
   }
 }
 
-function checkBorderTouch() {
+function checkBorderCollision() {
   if ((snakeHeadX + 20*nextX) < 0 || (snakeHeadX + 20*nextX) > 19*20 || (snakeHeadY + 20*nextY) < 0 || (snakeHeadY + 20*nextY) > 19*20) {
     return true;
+  }
+}
+
+function checkBodyCollision() {
+  for (var i = 1; i < snakeBody.length; i++) {
+    if ((snakeHeadX + 20*nextX) == snakeBody[i].x && (snakeHeadY + 20*nextY) == snakeBody[i].y) {
+      return true;
+    }
   }
 }
 
@@ -66,12 +73,8 @@ function draw() {
 
     if (continueGame) {
       //end game if border is touched
-      if (checkBorderTouch()) {
+      if (checkBorderCollision() || checkBodyCollision()) {
         continueGame = false;
-        //get rid of apple and snake?
-
-        //else if snake head touches body piece
-
       } else {
         //load apple
         ctx.fillStyle = appleColour;
@@ -83,13 +86,9 @@ function draw() {
         snakeHeadX += 20 * nextX; //new head position after keydown event
         snakeHeadY += 20 * nextY;
 
-        testCount = 0;
         //snake shifter: move body pieces along one space
         if(snakeBody.length >= 2) { //two or more body pieces
           for (var i = snakeBody.length - 1; i > 0; i--) {
-            console.log("i is: " + i);
-            testCount++; 
-            console.log("test count is: " + testCount); //testCount reveals ****infinite loop....
             snakeBody[i].x = snakeBody[i - 1].x; //this wouldn't work if body length is just 2
             snakeBody[i].y = snakeBody[i - 1].y;
           }
