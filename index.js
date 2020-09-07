@@ -93,7 +93,6 @@ function draw() {
             snakeBody[i].y = snakeBody[i - 1].y;
           }
         }
-        
 
         snakeBody[0].x = snakeHeadX; //update snake head
         snakeBody[0].y = snakeHeadY;
@@ -131,26 +130,44 @@ function draw() {
   }
 }
 
-//implement border death (probably done somewhere else)
 function keyDownEvent(e) {
   switch (e.keyCode) {
-  case 37:
-    //if snakeLength > 1 && currentDirection is right, set nextX and Y to 0, else { ...
-    nextX = -1;
-    nextY = 0;
-    break;
-  case 38:
-    nextX = 0;
-    nextY = -1;
-    break;
-  case 39:
-    nextX = 1;
-    nextY = 0;
-    break;
-  case 40:
-    nextX = 0;
-    nextY = 1;
-    break;
+    case 37:
+      if (snakeBody.length > 1 && currentDirection == 3) { //cannot turn directly left if snake is going right
+        nextX = 1;
+      } else { 
+        nextX = -1;
+        currentDirection = 1;
+      }
+      nextY = 0;
+      break;
+    case 38:
+      nextX = 0;
+      if (snakeBody.length > 1 && currentDirection == 4) { //cannot go directly up if snake is moving down
+        nextY = 1;
+      } else {
+        nextY = -1;
+        currentDirection = 2;
+      }
+      break;
+    case 39:
+      if (snakeBody.length > 1 && currentDirection == 1) { //cannot go directly right if snake is moving left
+        nextX = -1;
+      } else {
+        nextX = 1;
+        currentDirection = 3;
+      }
+      nextY = 0;
+      break;
+    case 40:
+      nextX = 0;
+      if (snakeBody.length > 1 && currentDirection == 2) { //cannot go directly down if snake is going up
+        nextY = -1;
+      } else {
+        nextY = 1;
+        currentDirection = 4;
+      }
+      break;
   }
 }
 
