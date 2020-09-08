@@ -15,6 +15,7 @@
 document.addEventListener("keydown", keyDownEvent);
 var continueGame = true;
 var tileSize = 20;
+var appleCount = 0;
 var snakeBody = [];
 var snakeHeadX = 6 * tileSize;
 var snakeHeadY = 10 * tileSize;
@@ -22,13 +23,14 @@ var nextX = 0;
 var nextY = 0;
 var appleX = 14 * tileSize;
 var appleY = 10 * tileSize;
-var snakeColour = 'rgb(255, 255, 102)';
+var snakeColour = 'rgb(235, 225, 52)';
+var currentSnakeColour = snakeColour;
 var appleColour = 'rgb(255, 30, 30)';
 var deadSnakeColour = 'rgb(115, 115, 115)';
 var currentDirection = 0; //1 = left, 2 = up, 3 = right, 4 = down
 
 snakeBody.push({x: snakeHeadX, y: snakeHeadY});
-setInterval(draw, 1000 / 7); //draw 7 times a second
+setInterval(draw, 1000 / 8); //draw 7 times a second
 
 function loadBackground(ctx) {
   //checkered background
@@ -64,7 +66,13 @@ function checkBodyCollision() {
 
 function drawSnake(ctx) {
   for (var i = 0; i < snakeBody.length; i++) {
+    ctx.fillStyle = currentSnakeColour;
     ctx.fillRect(snakeBody[i].x, snakeBody[i].y, tileSize, tileSize);
+    // ctx.strokeStyle = 'rgb(255, 255, 255)';
+    // ctx.beginPath();
+    // ctx.moveTo(snakeBody[i].x + 10, snakeBody[i].y + 20);
+    // ctx.bezierCurveTo(20, 100, 200, 100, snakeBody[i].x + 10, snakeBody[i].y);
+    // ctx.stroke();
   }
 }
 
@@ -80,12 +88,13 @@ function draw() {
     //load apple
     ctx.fillStyle = appleColour;
     ctx.fillRect(appleX, appleY, tileSize, tileSize);
+    document.getElementById("apples").innerHTML = "Apple count: " + appleCount; 
 
     if (continueGame) {
       //end game if border or body is touched
       if (checkBorderCollision() || checkBodyCollision()) {
         continueGame = false;
-        ctx.fillStyle = deadSnakeColour;
+        currentSnakeColour = deadSnakeColour;
         drawSnake(ctx);
 
       } else {
@@ -107,7 +116,7 @@ function draw() {
         snakeBody[0].y = snakeHeadY;
 
         //snake
-        ctx.fillStyle = snakeColour;
+        currentSnakeColour = snakeColour;
         drawSnake(ctx);
         
       }
@@ -119,11 +128,12 @@ function draw() {
         //implement: make sure apple doesn't respawn in snake body
         appleX = Math.floor(Math.random() * tileSize) * tileSize;
         appleY = Math.floor(Math.random() * tileSize) * tileSize;
+        appleCount++;
       }
 
     } else {
       //game over screen + score + (hi-score?)
-      ctx.fillStyle = deadSnakeColour;
+      currentSnakeColour = deadSnakeColour;
       drawSnake(ctx);
     }
   }
