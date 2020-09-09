@@ -4,12 +4,16 @@
 - unnecessary to load apple and background each time? only load when consumed? nbd tho
 - push on two body pieces rather than 1?
 - adjustable grid (and tile) size?
+  - full screen mode?
 - adjustable speed/difficulty (higher draws per second)
 - disable borders option (portals instead)
 - apple count
+  - change font
+- centre canvas in window
 - game over screen (apple count, high-score apple count?)
 - add an html element beneath canvas that displays current score mid-game?
 - sound effects
+- what happens if you win?
 */
 
 document.addEventListener("keydown", keyDownEvent);
@@ -23,7 +27,7 @@ var nextX = 0;
 var nextY = 0;
 var appleX = 14 * tileSize;
 var appleY = 10 * tileSize;
-var snakeColour = 'rgb(235, 225, 52)';
+var snakeColour = 'rgb(255, 255, 102)';
 var currentSnakeColour = snakeColour;
 var appleColour = 'rgb(255, 30, 30)';
 var deadSnakeColour = 'rgb(115, 115, 115)';
@@ -51,7 +55,7 @@ function loadBackground(ctx) {
 }
 
 function checkBorderCollision() {
-  if ((snakeHeadX + tileSize * nextX) < 0 || (snakeHeadX + tileSize * nextX) > 19 * tileSize || (snakeHeadY + tileSize * nextY) < 0 || (snakeHeadY + tileSize * nextY) > 19 * tileSize) {
+  if ((snakeHeadX + tileSize * nextX) < 0 || (snakeHeadX + tileSize * nextX) > (tileSize-1) * tileSize || (snakeHeadY + tileSize * nextY) < 0 || (snakeHeadY + tileSize * nextY) > (tileSize - 1) * tileSize) {
     return true;
   }
 }
@@ -78,11 +82,13 @@ function drawSnake(ctx) {
 
 function draw() {
   var canvas = document.getElementById('canvas');
+
   var prevX;
   var prevY;
 
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
+
     // load checkered background
     loadBackground(ctx);
     //load apple
