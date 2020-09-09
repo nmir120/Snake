@@ -18,7 +18,7 @@
 
 document.addEventListener("keydown", keyDownEvent);
 var continueGame = true;
-var tileSize = 20;
+var tileSize = 24;
 var appleCount = 0;
 var snakeBody = [];
 var snakeHeadX = 6 * tileSize;
@@ -82,12 +82,17 @@ function drawSnake(ctx) {
 
 function draw() {
   var canvas = document.getElementById('canvas');
-
+  
   var prevX;
   var prevY;
 
   if (canvas.getContext) {
     var ctx = canvas.getContext('2d');
+    // if(window.innerWidth >= 2000) { //experimenting with increasing canvas size if screen is bigger
+    //   ctx.canvas.width = 900;
+    //   ctx.canvas.height = 900;
+    //   tileSize = 30;
+    // }
 
     // load checkered background
     loadBackground(ctx);

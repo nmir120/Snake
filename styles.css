@@ -1,10 +1,10 @@
-@font-face{
+@font-face {
   font-family:"monaco1";
   src: url(font/monaco.ttf)
 }
 
-div.a {
-  line-height: 10px;
+canvas { 
+  border: 8px solid black;  
 }
 
 p {
@@ -21,4 +21,11 @@ h1 {
   text-align: center; 
   font-family: 'monaco1'; 
   font-size: 80px;
+}
+
+.x {
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
