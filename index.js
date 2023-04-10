@@ -14,7 +14,11 @@
 - add an html element beneath canvas that displays current score mid-game?
 - sound effects
 - what happens if you win?
+
+bug: after a few apples, going right and quickly hitting down and left kills snake
+- same with going left and hittin down + right quickly (even up + left or right)
 */
+
 
 document.addEventListener("keydown", keyDownEvent);
 var continueGame = true;
@@ -80,9 +84,13 @@ function drawSnake(ctx) {
   }
 }
 
+function retry(){
+  location.reload();
+}
+
 function draw() {
   var canvas = document.getElementById('canvas');
-  
+
   var prevX;
   var prevY;
 
@@ -102,11 +110,17 @@ function draw() {
     document.getElementById("apples").innerHTML = "Apple count: " + appleCount; 
 
     if (continueGame) {
-      //end game if border or body is touched
+      //GAME OVER end game if border or body is touched
       if (checkBorderCollision() || checkBodyCollision()) {
         continueGame = false;
         currentSnakeColour = deadSnakeColour;
-        drawSnake(ctx);
+
+        // show game over modal
+        var modal = document.getElementById("modal");
+        modal.style.display = "flex";
+        var scoreElement = document.getElementById("score");
+        scoreElement.textContent = appleCount + (appleCount == 1 ? " apple" : " apples");
+        //modal.innerHTML = "<h2>Game Over</h2><p>Apple count: " + appleCount + "</p><button onclick='location.reload();'>Try again?</button>";
 
       } else {
         //copy prev X and Y position for body, and update snakeHeadX and Y,
@@ -128,9 +142,8 @@ function draw() {
 
         //snake
         currentSnakeColour = snakeColour;
-        drawSnake(ctx);
-        
       }
+      drawSnake(ctx);
 
       //if snake head touches apple... add body piece, respawn apple
       if (snakeHeadX == appleX && snakeHeadY == appleY) {
@@ -149,6 +162,7 @@ function draw() {
     }
   }
 }
+
 
 function keyDownEvent(e) {
   switch (e.keyCode) {

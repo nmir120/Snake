@@ -13,16 +13,24 @@
     </head>
     <body onload="draw();" style="background-color: rgb(168, 214, 131)">
       <div class="x">
-        <div style="line-height: 0.5px;"> 
-          <h1>Snake</h1>
-          <p class="a">A recreation of the classic flash game, by Numan Mir</p> 
-        </div>
-        <div>
-          <canvas id="canvas" width="576" height="576"></canvas>
-        </div>
-        <div>
-          <p id="apples" style>Apple count: 0</p>
-        </div>
+          <div style="line-height: 0.5px;"> 
+              <h1>Snake</h1>
+              <p class="a">A recreation of the classic flash game, by Numan Mir</p> 
+          </div>
+          <div>
+              <canvas id="canvas" width="576" height="576"></canvas>
+          </div>
+          <div>
+              <p id="apples">Apple count: 0</p>
+          </div>
+      </div>
+      <!-- Modal -->
+      <div id="modal" class="modal">
+          <div class="modal-content">
+              <h2>Game Over</h2>
+              <p>You got <span id="score"></span></p>
+              <button onclick="retry();" id="try-again-btn">Try again</button>
+          </div>
       </div>
     </body>
 </html>
